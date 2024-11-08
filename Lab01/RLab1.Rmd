@@ -28,16 +28,16 @@ library(dplyr)
 ```{r import_data}
 load("CBdata_1_10.RData") #Loading the cherry blossom data. (this is an example of a properly commented line of code)
 
-#Now write code to remove the specified column
-dat.76 <- data.frame(CBdata.1_10[4])
-dat.76 <- dat.76[-6]
+
+dat.76 <- data.frame(CBdata.1_10[4]) #Extracting the data for 1976 and storing it in a data frame called dat.76
+dat.76 <- dat.76[-6] #Removing the column Pis/Tis
 ```
 
 
 2) The function `summary()` is useful for learning basic facts about vectors, data frames, and many other R objects. Use this function to find the mean and median recorded ages in 1976. 
 
 ```{r summary}
-summary(dat.76$Age)
+summary(dat.76$Age) #Using the summary function to find the mean and median recorded ages in 1976
 ```
 
 
@@ -47,8 +47,8 @@ Hints:
 - Depending on how you write your code, you may need to negate a logical vector using `!`. Ex: `!c(TRUE, TRUE, FALSE)` is identical to `c(FALSE, FALSE, TRUE)`.
 
 ```{r filter_missing_age_loop}
-dat.76.clean = as.data.frame(matrix(ncol=9,nrow=0))
-for(i in 1:length(dat.76$Age)){
+dat.76.clean = as.data.frame(matrix(ncol=9,nrow=0)) #Creating an empty data frame to store the cleaned data
+for(i in 1:length(dat.76$Age)){                     #Looping through the data frame to remove observations that don't have age                                                        data
   if(!is.na(dat.76$Age[i])){
     dat.76.clean = rbind(dat.76.clean, dat.76[i,])
   }else{dat.76.clean = dat.76.clean}
