@@ -129,13 +129,91 @@ load("IPS_portion.RData")
 ### Examining the data more closely
 
 1. Create the function `tally_mac` whose only input is the MAC address of an access point, and returns the number of observations found in the data set for it.
-
+```{r eval=T, echo=T}
+tally_mac <- function(mac_address){
+  count <- sum(data$mac == mac_address, na.rm = TRUE)
+  return(count)
+}
+```
 2. Use the function `unique` to identify the unique levels for `mac` found in the data set. 
-
+```{r eval=T, echo=T}
+unique_mac_addresses <- unique(IPS_sampledata$mac)
+unique_mac_addresses
+```
 3. Using an approach learned in class together with `tally_mac`, tally the  number of observations for all access points in the data. While the researchers did their best to clean their data, some noise was introduced by access points on other floors.  Based on the number of counts, identify and remove likely suspects for access points read by mistake.
+```{r eval=T, echo=T}
+library(dplyr)
+
+mac_counts_df <- IPS_sampledata %>%
+  group_by(mac) %>%
+  summarize(count = n())
+
+threshold <- 5
+cleaned_mac_counts_df <- mac_counts_df %>%
+  filter(count >= threshold)
+
+```
 
 4.  The orientation of the hand-held device considered was supposed to be exactly set to the 8 angles from 0-315 in increments of 45 degrees (360 is equivalent to 0). However, in practice the measured orientations were close to the 8 expected but had some error, so we'll need to group them.  Develop and apply a function to recode the orientation values as one of 0, 45, 90, 135, 180, 225, 270, 315. Call the recoded orientation variable `rec_orient`.
 
-5. Create the function `signal_summary` that takes as inputs a location (`posX`, `posY`, `posZ`), an orientation (`rec_orient`) and an access point id (`mac`).  The function must identify and subset the rows in `IPS_sampledata` corresponding to this unique combination, then it must calculate and return the mean and standard deviation for the corresponding signal strengths. 
+```{r eval=T, echo=T}
+IPS_sampledata$orientation <- as.numeric(IPS_sampledata$orientation)
+recode_orientation <- function(orientation) {
+   if (is.na(orientation)) {
+    return(NA)
+   }
+  target_angles <- c(0, 45, 90, 135, 180, 225, 270, 315)
+  closest_angle <- target_angles[which.min(abs(target_angles - orientation))]
+  
+  return(closest_angle)
+}
+IPS_sampledata$rec_orient <- sapply(IPS_sampledata$orientation, recode_orientation)
 
+head(IPS_sampledata)
+```
+
+5. Create the function `signal_summary` that takes as inputs a location (`posX`, `posY`, `posZ`), an orientation (`rec_orient`) and an access point id (`mac`).  The function must identify and subset the rows in `IPS_sampledata` corresponding to this unique combination, then it must calculate and return the mean and standard deviation for the corresponding signal strengths. 
+```{r eval=T, echo=T}
+signal_summary <- function(posX, posY, posZ, rec_orient, mac) {
+   subset_data <- IPS_sampledata[
+    IPS_sampledata$posX == posX &
+    IPS_sampledata$posY == posY &
+    IPS_sampledata$posZ == posZ &
+    IPS_sampledata$rec_orient == rec_orient &
+    IPS_sampledata$mac == mac, ]
+   mean_signal <- mean(subset_data$signal_strength, na.rm = TRUE)
+  sd_signal <- sd(subset_data$signal_strength, na.rm = TRUE)
+  return(list(mean = mean_signal, sd = sd_signal))
+}
+
+```
 6.  Create a list where each entry corresponds to a named list including unique combination of a location, an orientation, and an access point.  Use this list in combination with `lapply` and `signal_summary` to generate a summary of signals for each unique combination. `Hint`: you may want to create a new variable with a unique identifier that combines location, `rec_orient` and `mac` to make your life simpler.  One way to go about this is using the `paste` function (see `?paste` for help on its use) with these variables in a row-by-row fashion.
+```{r eval=T, echo=T}
+IPS_sampledata$unique_id <- with(IPS_sampledata, paste(posX, posY, posZ, rec_orient, mac, sep = "_"))
+unique_combinations <- unique(IPS_sampledata[c("posX", "posY", "posZ", "rec_orient", "mac")])
+combination_list <- apply(unique_combinations, 1, function(row) {
+  list(posX = row["posX"], posY = row["posY"], posZ = row["posZ"], rec_orient = row["rec_orient"], mac = row["mac"])
+})
+
+signal_summary <- function(posX, posY, posZ, rec_orient, mac) {
+   subset_data <- IPS_sampledata[
+    IPS_sampledata$posX == posX &
+    IPS_sampledata$posY == posY &
+    IPS_sampledata$posZ == posZ &
+    IPS_sampledata$rec_orient == rec_orient &
+    IPS_sampledata$mac == mac, ]
+   mean_signal <- mean(subset_data$signal_strength, na.rm = TRUE)
+   sd_signal <- sd(subset_data$signal_strength, na.rm = TRUE)
+   return(list(mean = mean_signal, sd = sd_signal))
+}
+signal_summaries <- lapply(combination_list, function(combination) {
+  signal_summary(
+    posX = combination$posX,
+    posY = combination$posY,
+    posZ = combination$posZ,
+    rec_orient = combination$rec_orient,
+    mac = combination$mac
+  )
+})
+
+```
