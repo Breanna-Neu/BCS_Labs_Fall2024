@@ -59,34 +59,34 @@ for(i in 1:length(dat.76$Age)){                     #Looping through the data fr
 How to check your work: If your loop produced a data frame called "dat.76.clean" and the vectorization approach produced a data frame called `dat.76.clean2`, the `identical(dat.76.clean,dat.76.clean2)` should return `TRUE`.
 
 ```{r filter_missing_age_vectorization}
-dat.76.clean2 = as.data.frame(matrix(ncol=9,nrow=0))
-dat.76.clean2 <- dat.76[!is.na(dat.76$Age),]
-identical(dat.76.clean, dat.76.clean2)
+dat.76.clean2 = as.data.frame(matrix(ncol=9,nrow=0)) #Creating a second empty data frame to store the cleaned data
+dat.76.clean2 <- dat.76[!is.na(dat.76$Age),] #Using vectorization to remove observations that don't have age data
+identical(dat.76.clean, dat.76.clean2) #Checking if the two approaches produced the same data frame
 ```
 
 5) Filtering out missing age data could be useful when dealing with other years. With this in mind, turn your filter loop or vectorization approach into a function. You should be able to use the function like this: `dat.76.clean <- filter.func(dat.76)`.  
 When you have a function written, run it on the 1976 data and use identical() to verify that your function and the first loop you wrote are doing the same thing.
 
 ```{r filter_func}
-filter.func <- function(df){
+filter.func <- function(df){  #Now we are creating a function to remove observations that don't have age data
   df <- df[!is.na(df[[3]]),]
 }
 dat.76.clean3 <- filter.func(dat.76)
-identical(dat.76.clean, dat.76.clean3)
+identical(dat.76.clean, dat.76.clean3) #Checking if the function and the first loop are doing the same thing
 ```
 
 6) Next, write a loop that combines all of the data from `CBdata.1_10` into one cleaned data frame. Make sure your final data frame has neither the `Pis/Tis` column nor `NA` Age values.  
 Use the `identical()` function to verify that the 1976 data in this larger cleaned data set is the same as the cleaned version of `dat.76`. 
 
 ```{r combine_dat}
-CBdata.clean = as.data.frame(matrix(ncol=9,nrow=0))
-for(i in 1:length(CBdata.1_10)){
-  df = data.frame(CBdata.1_10[i])
-  df = df[-6]
-  CBdata.clean = rbind(CBdata.clean, df[!is.na(df[[3]]),])
+CBdata.clean = as.data.frame(matrix(ncol=9,nrow=0)) #we create a final empty data frame to store the cleaned data
+for(i in 1:length(CBdata.1_10)){ #we loop through the data frame to remove observations that don't have age data
+  df = data.frame(CBdata.1_10[i]) #we create a temporary data frame to store the data for each year
+  df = df[-6] #we remove the column Pis/Tis
+  CBdata.clean = rbind(CBdata.clean, df[!is.na(df[[3]]),]) 
 }
 CBdata.clean.76  = subset(CBdata.clean, Year == "1976")
-identical(row.names(dat.76.clean)<-NULL, row.names(CBdata.clean.76)<-NULL) 
+identical(row.names(dat.76.clean)<-NULL, row.names(CBdata.clean.76)<-NULL) #we check if the 1976 data in the larger cleaned data set is the same as the cleaned version of dat.76
 ```
 
 7) Now that you have the combined data set for these 10 years, let's do some basic exploration:  
@@ -290,4 +290,9 @@ signal_summaries <- lapply(combination_list, function(combination) {
 })
 
 ```
-
+boise state montana
+portland montana
+portland portland state
+portland state montana
+portland state washington
+portland washington
