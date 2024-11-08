@@ -138,7 +138,10 @@ load("IPS_portion.RData")
 1. First apply the `summary` function to the `IPS_data` to get a sense of what is available in that data frame.
 
 ```{r}
+#get an overview of each variable in the data frame
 summary(IPS_sampledata)
+summary(IPS_sampledata)
+#examine its structure and contents
 head(IPS_sampledata)
 ```
 
@@ -146,17 +149,20 @@ head(IPS_sampledata)
 2. Identify variables that need any `class` conversion. Attempting to avoid code-replication as much as possible, convert these variables into the correct class type.
 
 ```{r}
-
+# converting position variables to numeric to ensure they are treated as continuous values
 IPS_sampledata$posX <- as.numeric(IPS_sampledata$posX)
 IPS_sampledata$posY <- as.numeric(IPS_sampledata$posY)
 IPS_sampledata$posZ <- as.numeric(IPS_sampledata$posZ)
+
+# converting signal strength variables to numeric for accurate numerical analysis
 IPS_sampledata$signal <- as.numeric(IPS_sampledata$signal)
 IPS_sampledata$orientation <- as.numeric(IPS_sampledata$orientation)
+
+# converting categorical variables to factors to optimize storage and facilitate categorical analysis
 IPS_sampledata$scanMac <- as.factor(IPS_sampledata$scanMac)
 IPS_sampledata$mac <- as.factor(IPS_sampledata$mac)
 IPS_sampledata$channel <- as.factor(IPS_sampledata$channel)
 IPS_sampledata$type <- as.factor(IPS_sampledata$type)
-
 
 ```
 
@@ -164,6 +170,8 @@ IPS_sampledata$type <- as.factor(IPS_sampledata$type)
 3. Because we only want data relative to access points, remove observations that correspond to any other type of device.
 
 ```{r}
+# filter the data to keep only rows where the `type` variable is 3 (indicating access points)
+
 IPS_sampledata <- IPS_sampledata %>% filter(type == 3)
 ```
 
@@ -171,6 +179,7 @@ IPS_sampledata <- IPS_sampledata %>% filter(type == 3)
 4. Assess if there are any variables that provide redundant or no information. If so, remove them from the data frame.
 
 ```{r}
+#remove columns with only one unique value, since they provide redundant information
 IPS_sampledata <- IPS_sampledata %>% select(where(~ n_distinct(.) > 1))
 ```
 
@@ -178,12 +187,12 @@ IPS_sampledata <- IPS_sampledata %>% select(where(~ n_distinct(.) > 1))
 5. Note that the `time` variable is in milliseconds.  Transform it into seconds and then convert its class into a time format using the function `as.POSIXct`.
 
 ```{r}
-
+#checking if 'time' variable is numeric; if not convert to numeric 
 if (!is.numeric(IPS_sampledata$time)) {
   IPS_sampledata$time <- as.numeric(IPS_sampledata$time)
 }
 
-IPS_sampledata$time <- IPS_sampledata$time / 1000
+IPS_sampledata$time <- IPS_sampledata$time / 1000 #convert time from milliseconds to seconds
 IPS_sampledata$time <- as.POSIXct(IPS_sampledata$time, origin="1970-01-01", tz="UTC")
 
 ```
