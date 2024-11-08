@@ -7,7 +7,14 @@ output: rmdformats::html_docco
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+```{r}
+library(dplyr)
+```
+
+
 **Complete the following lab as a group. One of your team members should clone this repo to your GitHub, add your teammates and work on the lab as a Git repo from RStudio. Complete every problem in the Lab, including those of the project that you are not working on. Your code should be heavily commented so someone reading your code can follow along easily. See the first code snippet below for an example of commented code.**
+
 
 **Here's the catch: For any given problem, the person writing the code should not be the person commenting that code, and every person must both code AND comment at least one problem in this lab (you decide how to split the work). This will involve lots of pushing and pulling through Git, and you may have to resolve conflicts if you're not careful! Refer to last Thursday's class notes for details on conflict resolution.**
 
@@ -83,8 +90,21 @@ identical(row.names(dat.76.clean)<-NULL, row.names(CBdata.clean.76)<-NULL)
 ```
 
 7) Now that you have the combined data set for these 10 years, let's do some basic exploration:  
-a) How does the average of the recorded ages in 1976 compare to that same average over the entire `CBdata_1_10` data set?  
+a) How does the average of the recorded ages in 1976 compare to that same average over the entire `CBdata_1_10` data set? 
+
+```{r}
+mean(dat.76.clean$Age)
+mean(CBdata.clean$Age)
+
+```
+
 b) Recall that the `CBdata_1_10` contains the first ten year's worth of cherry blossom race data. How does the average participant age over the first five years compare to the average age over years 6-10?
+
+```{r}
+mean(subset(CBdata.clean, Year %in% c("1973", "1974", "1975", "1976", "1977"))$Age)
+mean(subset(CBdata.clean, Year %in% c("1978", "1979", "1980", "1981", "1982"))$Age)
+```
+
 
 # Playing with the indoor positioning system data
 
@@ -115,15 +135,58 @@ load("IPS_portion.RData")
 
 ### Let's clean up the data a bit
 
-1. First apply the `summary` function to the `IPS_data` to get a sense of what is available in that data frame. 
+1. First apply the `summary` function to the `IPS_data` to get a sense of what is available in that data frame.
+
+```{r}
+summary(IPS_sampledata)
+head(IPS_sampledata)
+```
+
 
 2. Identify variables that need any `class` conversion. Attempting to avoid code-replication as much as possible, convert these variables into the correct class type.
 
+```{r}
+
+IPS_sampledata$posX <- as.numeric(IPS_sampledata$posX)
+IPS_sampledata$posY <- as.numeric(IPS_sampledata$posY)
+IPS_sampledata$posZ <- as.numeric(IPS_sampledata$posZ)
+IPS_sampledata$signal <- as.numeric(IPS_sampledata$signal)
+IPS_sampledata$orientation <- as.numeric(IPS_sampledata$orientation)
+IPS_sampledata$scanMac <- as.factor(IPS_sampledata$scanMac)
+IPS_sampledata$mac <- as.factor(IPS_sampledata$mac)
+IPS_sampledata$channel <- as.factor(IPS_sampledata$channel)
+IPS_sampledata$type <- as.factor(IPS_sampledata$type)
+
+
+```
+
+
 3. Because we only want data relative to access points, remove observations that correspond to any other type of device.
+
+```{r}
+IPS_sampledata <- IPS_sampledata %>% filter(type == 3)
+```
+
 
 4. Assess if there are any variables that provide redundant or no information. If so, remove them from the data frame.
 
+```{r}
+IPS_sampledata <- IPS_sampledata %>% select(where(~ n_distinct(.) > 1))
+```
+
+
 5. Note that the `time` variable is in milliseconds.  Transform it into seconds and then convert its class into a time format using the function `as.POSIXct`.
+
+```{r}
+
+if (!is.numeric(IPS_sampledata$time)) {
+  IPS_sampledata$time <- as.numeric(IPS_sampledata$time)
+}
+
+IPS_sampledata$time <- IPS_sampledata$time / 1000
+IPS_sampledata$time <- as.POSIXct(IPS_sampledata$time, origin="1970-01-01", tz="UTC")
+
+```
 
 
 ### Examining the data more closely
