@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Playing With Cherry Blossom Race Data
 
-1) First load the data, which is saved as a .RData file called `CBdata.1_10.RData`. This is the first ten years' worth of Cherry Blossom Race data. Pull out the data associated with 1976 and store it as a data frame called `dat.76`. Remove the column `Pis/Tis` using a `dplyr` function. 
+1) First load the data, which is saved as a .RData file called `CBdata1_10.RData`. This is the first ten years' worth of Cherry Blossom Race data. Pull out the data associated with 1976 and store it as a data frame called `dat.76`. Remove the column `Pis/Tis` using a `dplyr` function. 
 
 
 ```{r import_data}
