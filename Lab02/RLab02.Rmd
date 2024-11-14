@@ -22,14 +22,15 @@ library(dplyr)
 load("CBdata1_10.RData") #Loading the cherry blossom data. (this is an example of a properly commented line of code)
 
 #Now write code to remove the specified column
-
+dat.76 <- data.frame(CBdata.1_10[4])
+dat.76 <- dat.76 %>% select(-PiS.TiS)
 ```
 
 
 2) Use the `summarise()` function to find the mean and median recorded ages in 1976. 
 
 ```{r summary}
-
+dat.76 %>% summarise(mean(Age, na.rm = T), median(Age, na.rm = T))
 ```
 
 
@@ -37,8 +38,7 @@ load("CBdata1_10.RData") #Loading the cherry blossom data. (this is an example o
 
 
 ```{r remove_missing_age}
-
-
+dat.76.clean <- dat.76 %>% filter(!is.na(Age))
 ```
 
 
@@ -46,13 +46,34 @@ load("CBdata1_10.RData") #Loading the cherry blossom data. (this is an example o
 Use the `identical()` function to verify that the 1976 data in this larger cleaned data set is the same as the cleaned version of `dat.76`. 
 
 ```{r combine_dat}
-
+CBdata.Clean <- CBdata.1_10 %>% 
+  bind_rows(list()) %>% 
+  select(-'PiS/TiS') %>% 
+  filter(!is.na(Age))
 ```
 
 5) Now that you have the combined data set for these 10 years, let's compare some basic results to what you found last week. Use piping and `dplyr` functions in your computations.  
 a) Calculate the average of the recorded ages in 1976 and that same average over the entire `CBdata.1_10` data set, and make sure these numbers match the ones you found in Lab 1.  
+
+```{r}
+dat.76.clean %>% summarise(mean(Age))
+CBdata.Clean %>% summarise(mean(Age))
+```
+
+From Lab 1: Average Age in 1976 32.09356, Average Age over first 10 years 33.26157.
+From Lab 2: Average Age in 1976 32.09356, Average Age over first 10 years 33.26157.
+They do match.
+
 b) Recall that the `CBdata.1_10` contains the first ten year's worth of cherry blossom race data. Compute the average participant age over the first five years and the average age over years 6-10, and make sure these numbers match the ones you found in Lab 1.  
 
+```{r}
+CBdata.Clean %>% filter(Year < 1978) %>% summarise(mean(Age))
+CBdata.Clean %>% filter(Year > 1977) %>% summarise(mean(Age))
+```
+
+From Lab 1: Average Age 1973-1977 31.11927, Average Age 1978-1982 33.69101.
+From Lab 2: Average Age 1973-1977 31.11927, Average Age 1978-1982 33.69101.
+They do match.
 
 6) Let's now incorporate weather data into our cherry blossom data set. We will be dealing with multiple data sources, so this is a perfect oppritunity to practice `join` skills...
 a) use `readr()` to import the `weatherdat.csv` data. This is raw data recorded by a weather station in the Washington DC area. This particular data set contains daily summaries of various weather measurements. 

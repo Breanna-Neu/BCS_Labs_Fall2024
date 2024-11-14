@@ -920,12 +920,12 @@ resolution.</strong></p>
 <h1>Playing With Cherry Blossom Race Data</h1>
 <ol style="list-style-type: decimal">
 <li>First load the data, which is saved as a .RData file called
-<code>CBdata.1_10.RData</code>. This is the first ten years’ worth of
+<code>CBdata1_10.RData</code>. This is the first ten years’ worth of
 Cherry Blossom Race data. Pull out the data associated with 1976 and
 store it as a data frame called <code>dat.76</code>. Remove the column
 <code>Pis/Tis</code> using a <code>dplyr</code> function.</li>
 </ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
@@ -934,9 +934,9 @@ store it as a data frame called <code>dat.76</code>. Remove the column
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;CBdata.1_10.RData&quot;</span>) <span class="co">#Loading the cherry blossom data. (this is an example of a properly commented line of code)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Now write code to remove the specified column</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;CBdata1_10.RData&quot;</span>) <span class="co">#Loading the cherry blossom data. (this is an example of a properly commented line of code)</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#Now write code to remove the specified column</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li><p>Use the <code>summarise()</code> function to find the mean and
 median recorded ages in 1976.</p></li>
@@ -998,8 +998,8 @@ columns to your cherry blossom data set.</li>
 indoor positioning system data for 15 randomly sampled locations.This
 data set is loaded into memory using the chunk of R code below, complete
 the following exercises.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loads data set IPS_sampledata</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;IPS_portion.RData&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># loads data set IPS_sampledata</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;IPS_portion.RData&quot;</span>)</span></code></pre></div>
 <div id="variable-dictionary" class="section level3">
 <h3>Variable dictionary</h3>
 <ul>
