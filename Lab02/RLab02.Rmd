@@ -92,9 +92,9 @@ b) Open the `Rite_of_Spring_1973_2020-1.pdf` document, and record the dates of t
 # Dates for each year
 dates <- data.frame(
   year = 1973:1982,
-  date = c("1973-04-01", "1974-03-31", "1975-04-06", "1976-04-04", 
+  date = as.Date(c("1973-04-01", "1974-03-31", "1975-04-06", "1976-04-04", 
            "1977-04-03", "1978-04-02", "1979-04-01", "1980-03-30", 
-           "1981-04-05", "1982-04-04")
+           "1981-04-05", "1982-04-04"))
 )
 
 ```
@@ -105,12 +105,21 @@ c) Use a `join` function to add a date column to your cherry blossom data frame.
 
 ```{r}
 temp<-left_join(CBdata.Clean, dates, by = c("Year" = "year"))
-temp
+sample_n(temp, 10)
+```
+```{r}
+sample_n(weatherdata, 3)
+sample_n(temp, 3)
 ```
 
 
 d) Use a `join` function to add precipitation `PRCP`  and minimum daily temperature `TMIN` columns to your cherry blossom data set.
 
+```{r}
+CBdata.Clean <- left_join(temp, select(weatherdata, DATE, PRCP, TMIN), by = c("date" = "DATE"))
+sample_n(CBdata.Clean, 10)
+
+```
 
 # Playing with the indoor positioning system data
 
@@ -143,11 +152,53 @@ load("IPS_portion.RData")
 
 1. Apply the same `class` conversions you did last week to get these variables into the correct class type. Use `dplyr` functions and piping to complete this operation (there are many ways to do so). If you'd like to `mutate` multiple columns at once, the `across()` function might be useful!
 
+```{r}
+IPS_sampledata <- IPS_sampledata %>%
+  mutate(
+    time = as.numeric(time),
+    scanMac = as.character(scanMac),
+    posX = as.numeric(posX),
+    posY = as.numeric(posY),
+    posZ = as.numeric(posZ),
+    orientation = as.numeric(orientation),
+    mac = as.character(mac),
+    signal = as.numeric(signal),
+    channel = as.numeric(channel),
+    type = as.integer(type)
+  )
+
+```
+
+
 2. Because we only want data relative to access points, remove observations that correspond to any other type of device using `dplyr` functions.
+
+```{r}
+IPS_sampledata <- IPS_sampledata %>%
+  filter(type == 3)
+
+```
+
 
 3. Last week you identified variables that provide redundant or no information. Remove them from the data frame using `dplyr` functions. 
 
+```{r}
+IPS_sampledata <- IPS_sampledata %>%
+  select(-scanMac, -type)
+
+```
+
+
 4. Note that the `time` variable is in milliseconds.  Use `dplyr` to transform it into seconds and then convert its class into a time format using the function `as.POSIXct`.
+
+```{r}
+IPS_sampledata <- IPS_sampledata %>%
+  mutate(
+    time = as.POSIXct(time / 1000, origin = "1970-01-01", tz = "UTC")
+  )
+
+```
+
+
 
 5. Convert this data set to a more wide format by creating one column for each access point, with each of those columns containing the corresponding signal strengths. Hint: you should end up with a data frame that has a lot fewer rows!  
 Set this data set aside and use the long format data for the rest of the assignment
