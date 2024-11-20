@@ -154,18 +154,33 @@ load("IPS_portion.RData")
 ```{r}
 IPS_sampledata <- IPS_sampledata %>%
   mutate(
+    # Convert the time variable from its original type to numeric
+    # This ensures that time can be further transformed and analyzed
     time = as.numeric(time),
+    
+    # Convert scanMac to a character type since it represents MAC addresses (not numbers)
     scanMac = as.character(scanMac),
+    
+    # Convert the physical coordinates (posX, posY, posZ) to numeric for mathematical operations
     posX = as.numeric(posX),
     posY = as.numeric(posY),
     posZ = as.numeric(posZ),
+    
+    # Convert orientation to numeric as it represents degrees (can be used in calculations)
     orientation = as.numeric(orientation),
+    
+    # Convert mac (access point MAC address) to a character type for categorization
     mac = as.character(mac),
+    
+    # Convert signal strength to numeric for analysis (e.g., calculating averages)
     signal = as.numeric(signal),
+    
+    # Convert channel frequency to numeric for proper representation
     channel = as.numeric(channel),
+    
+    # Convert type to integer since it is a categorical variable (1 or 3)
     type = as.integer(type)
   )
-
 ```
 
 
@@ -173,8 +188,11 @@ IPS_sampledata <- IPS_sampledata %>%
 
 ```{r}
 IPS_sampledata <- IPS_sampledata %>%
-  filter(type == 3)
-
+  filter(
+    # Keep only rows where the type column equals 3 (indicating access points)
+    # This removes other types of devices (e.g., adhoc devices with type == 1)
+    type == 3
+  )
 ```
 
 
@@ -182,16 +200,24 @@ IPS_sampledata <- IPS_sampledata %>%
 
 ```{r}
 IPS_sampledata <- IPS_sampledata %>%
-  select(-scanMac, -type)
-
+  select(
+    # Exclude scanMac as it represents the handheld device (not relevant for analysis)
+    # Exclude type as it is now constant (all rows are type == 3 after filtering)
+    -scanMac, 
+    -type
+  )
 ```
 
 
 4. Note that the `time` variable is in milliseconds.  Use `dplyr` to transform it into seconds and then convert its class into a time format using the function `as.POSIXct`.
 
 ```{r}
+# Transform the `time` variable from milliseconds to seconds and then convert it to POSIXct format
 IPS_sampledata <- IPS_sampledata %>%
   mutate(
+    # Divide time by 1000 to convert from milliseconds to seconds
+    # Use as.POSIXct to convert the numeric time into a readable datetime format
+    # The 'origin' specifies the epoch (1970-01-01), and 'tz' sets the time zone to UTC
     time = as.POSIXct(time / 1000, origin = "1970-01-01", tz = "UTC")
   )
 
