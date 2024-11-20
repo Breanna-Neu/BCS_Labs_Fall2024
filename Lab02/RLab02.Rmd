@@ -209,32 +209,33 @@ Set this data set aside and use the long format data for the rest of the assignm
 
 ```{r}
 IPS_sampledata %>%
-  group_by(mac) %>%
-  tally() %>%
-  arrange(desc(n))
+  group_by(mac) %>% #grouping by access point
+  tally() %>% #tallying the number of observations for all access points
+  arrange(desc(n)) #displaying the counts in descending order
 ```
 
 2. While the researchers did their best to clean their data, some noise was introduced by access points on other floors.  Based on the number of counts, identify and remove likely suspects for access points read by mistake, again using `dplyr` functions.
 
 ```{r}
 IPS_sampledata <- IPS_sampledata %>%
-  group_by(mac) %>%
-  filter(n() >= 10) %>%
-  ungroup()
+  group_by(mac) %>% #grouping by access point
+  filter(n() >= 10) %>% #filtering out access points that have less than 10 observations
+  ungroup() #ungrouping the data
 ```
 3.  The orientation of the hand-held device considered was supposed to be exactly set to the 8 angles from 0-315 in increments of 45 degrees (360 is equivalent to 0). However, in practice the measured orientations were close to the 8 expected but had some error.  Use the `case_when` function to recode the orientation values as one of 0, 45, 90, 135, 180, 225, 270, 315. Call the recoded orientation variable `rec_orient`.
 
 ```{r}
 IPS_sampledata <- IPS_sampledata %>%
+  #creating new variable for the correct orientation values
   mutate(rec_orient = case_when(
-    orientation >= 337.5 | orientation < 22.5 ~ 0,
-    orientation >= 22.5 & orientation < 67.5 ~ 45,
-    orientation >= 67.5 & orientation < 112.5 ~ 90,
-    orientation >= 112.5 & orientation < 157.5 ~ 135,
-    orientation >= 157.5 & orientation < 202.5 ~ 180,
-    orientation >= 202.5 & orientation < 247.5 ~ 225,
-    orientation >= 247.5 & orientation < 292.5 ~ 270,
-    orientation >= 292.5 & orientation < 337.5 ~ 315
+    orientation >= 337.5 | orientation < 22.5 ~ 0, #setting value to 0 if original was greater/equal to 337.5 or less than 22.5
+    orientation >= 22.5 & orientation < 67.5 ~ 45,#setting value to 45 if original was greater/equal to 22.5 or less than 67.5
+    orientation >= 67.5 & orientation < 112.5 ~ 90,#setting value to 90 if original was greater/equal to 67.5 or less than 112.5
+    orientation >= 112.5 & orientation < 157.5 ~ 135,#setting value to 135 if original was greater/equal to 112.5 or less than 157.5
+    orientation >= 157.5 & orientation < 202.5 ~ 180,#setting value to 180 if original was greater/equal to 157.5 or less than 202.5
+    orientation >= 202.5 & orientation < 247.5 ~ 225,#setting value to 225 if original was greater/equal to 202.5 or less than 247.5
+    orientation >= 247.5 & orientation < 292.5 ~ 270,#setting value to 270 if original was greater/equal to 247.5 or less than 292.5
+    orientation >= 292.5 & orientation < 337.5 ~ 315#setting value to 315 if original was greater/equal to 292.5 or less than 337.5
   ))
 ```
 4. Last week you created the function `signal_summary` that takes as inputs a location (`posX`, `posY`, `posZ`), an orientation (`rec_orient`) and an access point id (`mac`).  The function identified and subset the rows in `IPS_sampledata` corresponding to this unique combination, then calculated and returned the mean and standard deviation for the corresponding signal strengths. You then used `lapply` to compute mean and standard deviation values for all combinations of location, orientation, and access point ID. 
@@ -242,12 +243,12 @@ Use piping,`summarise()`, and other `dplyr` functions to run this same computati
 
 ```{r}
 signal_summary <- IPS_sampledata %>%
-  group_by(posX, posY, posZ, rec_orient, mac) %>%
+  group_by(posX, posY, posZ, rec_orient, mac) %>% #grouping by location, orientation, and access point id
   summarise(
-    mean_signal = mean(signal, na.rm = TRUE),
-    sd_signal = sd(signal, na.rm = TRUE),
-    .groups = 'drop'
+    mean_signal = mean(signal, na.rm = TRUE), #average signal strength for each combination
+    sd_signal = sd(signal, na.rm = TRUE), #standard deviation of signal strength for each combination
+    .groups = 'drop' #ungrouping data
   )
 
-head(signal_summary)
+head(signal_summary) #checking work
 ```

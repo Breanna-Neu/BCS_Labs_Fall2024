@@ -925,7 +925,8 @@ Cherry Blossom Race data. Pull out the data associated with 1976 and
 store it as a data frame called <code>dat.76</code>. Remove the column
 <code>Pis/Tis</code> using a <code>dplyr</code> function.</li>
 </ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(dplyr) </span></code></pre></div>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.3.3</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
@@ -934,16 +935,25 @@ store it as a data frame called <code>dat.76</code>. Remove the column
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;CBdata1_10.RData&quot;</span>) <span class="co">#Loading the cherry blossom data. (this is an example of a properly commented line of code)</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#Now write code to remove the specified column</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;CBdata1_10.RData&quot;</span>) <span class="co">#Loading the cherry blossom data. (this is an example of a properly commented line of code)</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>dat<span class="fl">.76</span> <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(CBdata<span class="fl">.1</span>_10[<span class="dv">4</span>]) <span class="co">#Extracting the data for 1976</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>dat<span class="fl">.76</span> <span class="ot">&lt;-</span> dat<span class="fl">.76</span> <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>PiS.TiS) <span class="co">#Removing the column Pis/Tis</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
-<li><p>Use the <code>summarise()</code> function to find the mean and
-median recorded ages in 1976.</p></li>
-<li><p>You might have noticed that a number of age values are missing
+<li>Use the <code>summarise()</code> function to find the mean and
+median recorded ages in 1976.</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>dat<span class="fl">.76</span> <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">mean</span>(Age, <span class="at">na.rm =</span> T), <span class="fu">median</span>(Age, <span class="at">na.rm =</span> T)) <span class="co">#Calculating the mean and median ages in 1976</span></span></code></pre></div>
+<pre><code>##   mean(Age, na.rm = T) median(Age, na.rm = T)
+## 1             32.09356                     32</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>You might have noticed that a number of age values are missing
 (i.e. <code>NA</code>). Your next goal is to use <code>dplyr</code> to
-remove the data with missing age. This should not be a loop!</p></li>
-<li><p>Last week you wrote a loop to combine all of the data from
+remove the data with missing age. This should not be a loop!</li>
+</ol>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>dat.<span class="fl">76.</span>clean <span class="ot">&lt;-</span> dat<span class="fl">.76</span> <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Age)) <span class="co">#Removing the rows with missing age values</span></span></code></pre></div>
+<ol start="4" style="list-style-type: decimal">
+<li>Last week you wrote a loop to combine all of the data from
 <code>CBdata.1_10</code> into one cleaned data frame. Use the function
 <code>bind_rows()</code> from <code>dplyr</code> to accomplish this same
 task. use the <code>?</code> command to look up documentation on
@@ -952,23 +962,48 @@ Make sure your final data frame has neither the <code>Pis/Tis</code>
 column nor <code>NA</code> Age values.<br />
 Use the <code>identical()</code> function to verify that the 1976 data
 in this larger cleaned data set is the same as the cleaned version of
-<code>dat.76</code>.</p></li>
-<li><p>Now that you have the combined data set for these 10 years, let’s
+<code>dat.76</code>.</li>
+</ol>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>CBdata.Clean <span class="ot">&lt;-</span> CBdata<span class="fl">.1</span>_10 <span class="sc">%&gt;%</span> <span class="co">#Combining all the data</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">list</span>()) <span class="sc">%&gt;%</span>  <span class="co">#Binding the rows</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="st">&#39;PiS/TiS&#39;</span>) <span class="sc">%&gt;%</span> <span class="co">#Removing the column Pis/Tis</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Age)) <span class="co">#Removing the rows with missing age values</span></span></code></pre></div>
+<ol start="5" style="list-style-type: decimal">
+<li>Now that you have the combined data set for these 10 years, let’s
 compare some basic results to what you found last week. Use piping and
 <code>dplyr</code> functions in your computations.<br />
-</p></li>
+</li>
 </ol>
 <ol style="list-style-type: lower-alpha">
 <li>Calculate the average of the recorded ages in 1976 and that same
 average over the entire <code>CBdata.1_10</code> data set, and make sure
-these numbers match the ones you found in Lab 1.<br />
-</li>
+these numbers match the ones you found in Lab 1.</li>
+</ol>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>dat.<span class="fl">76.</span>clean <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">mean</span>(Age)) <span class="co">#Calculating the average age in 1976</span></span></code></pre></div>
+<pre><code>##   mean(Age)
+## 1  32.09356</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>CBdata.Clean <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">mean</span>(Age)) <span class="co">#Calculating the average age over the first 10 years</span></span></code></pre></div>
+<pre><code>##   mean(Age)
+## 1  33.26157</code></pre>
+<p>From Lab 1: Average Age in 1976 32.09356, Average Age over first 10
+years 33.26157. From Lab 2: Average Age in 1976 32.09356, Average Age
+over first 10 years 33.26157. They do match.</p>
+<ol start="2" style="list-style-type: lower-alpha">
 <li>Recall that the <code>CBdata.1_10</code> contains the first ten
 year’s worth of cherry blossom race data. Compute the average
 participant age over the first five years and the average age over years
 6-10, and make sure these numbers match the ones you found in Lab
 1.</li>
 </ol>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>CBdata.Clean <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&lt;</span> <span class="dv">1978</span>) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">mean</span>(Age)) <span class="co">#Calculating the average age over the first 5 years</span></span></code></pre></div>
+<pre><code>##   mean(Age)
+## 1  31.11927</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>CBdata.Clean <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&gt;</span> <span class="dv">1977</span>) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">mean</span>(Age)) <span class="co">#Calculating the average age over the next 5 years</span></span></code></pre></div>
+<pre><code>##   mean(Age)
+## 1  33.69101</code></pre>
+<p>From Lab 1: Average Age 1973-1977 31.11927, Average Age 1978-1982
+33.69101. From Lab 2: Average Age 1973-1977 31.11927, Average Age
+1978-1982 33.69101. They do match.</p>
 <ol start="6" style="list-style-type: decimal">
 <li>Let’s now incorporate weather data into our cherry blossom data set.
 We will be dealing with multiple data sources, so this is a perfect
@@ -979,18 +1014,129 @@ oppritunity to practice <code>join</code> skills…</li>
 data. This is raw data recorded by a weather station in the Washington
 DC area. This particular data set contains daily summaries of various
 weather measurements.</li>
+</ol>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>weatherdata <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;weatherdat.csv&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: One or more parsing issues, call `problems()` on your data frame for details,
+## e.g.:
+##   dat &lt;- vroom(...)
+##   problems(dat)</code></pre>
+<pre><code>## Rows: 3317 Columns: 33
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr   (3): STATION, NAME, PGTM
+## dbl  (24): ACMH, ACSH, PRCP, PSUN, SNOW, SNWD, TMAX, TMIN, TSUN, WDFG, WDFM,...
+## lgl   (5): TAVG, WDF1, WSF1, WT07, WT14
+## date  (1): DATE
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">head</span>(weatherdata)</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 33
+##   STATION NAME  DATE        ACMH  ACSH PGTM   PRCP  PSUN  SNOW  SNWD TAVG   TMAX
+##   &lt;chr&gt;   &lt;chr&gt; &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;dbl&gt;
+## 1 USW000… WASH… 1973-04-01   100   100 1906   0.5      6     0     0 NA       67
+## 2 USW000… WASH… 1973-04-02    80    90 1824   0       17     0     0 NA       65
+## 3 USW000… WASH… 1973-04-03    60    60 1536   0       57     0     0 NA       65
+## 4 USW000… WASH… 1973-04-04    70    90 2224   0.88    27     0     0 NA       59
+## 5 USW000… WASH… 1973-04-05    50    70 1324   0       35     0     0 NA       56
+## 6 USW000… WASH… 1973-04-06     0     0 1354   0      100     0     0 NA       67
+## # ℹ 21 more variables: TMIN &lt;dbl&gt;, TSUN &lt;dbl&gt;, WDF1 &lt;lgl&gt;, WDFG &lt;dbl&gt;,
+## #   WDFM &lt;dbl&gt;, WESD &lt;dbl&gt;, WSF1 &lt;lgl&gt;, WSFG &lt;dbl&gt;, WSFM &lt;dbl&gt;, WT01 &lt;dbl&gt;,
+## #   WT02 &lt;dbl&gt;, WT03 &lt;dbl&gt;, WT04 &lt;dbl&gt;, WT05 &lt;dbl&gt;, WT06 &lt;dbl&gt;, WT07 &lt;lgl&gt;,
+## #   WT08 &lt;dbl&gt;, WT09 &lt;dbl&gt;, WT14 &lt;lgl&gt;, WT16 &lt;dbl&gt;, WT18 &lt;dbl&gt;</code></pre>
+<ol start="2" style="list-style-type: lower-alpha">
 <li>Open the <code>Rite_of_Spring_1973_2020-1.pdf</code> document, and
 record the dates of the first 10 races. Store this information in a
 vector or data frame.</li>
+</ol>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="co"># Dates for each year</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>dates <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">1973</span><span class="sc">:</span><span class="dv">1982</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">&quot;1973-04-01&quot;</span>, <span class="st">&quot;1974-03-31&quot;</span>, <span class="st">&quot;1975-04-06&quot;</span>, <span class="st">&quot;1976-04-04&quot;</span>, </span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>           <span class="st">&quot;1977-04-03&quot;</span>, <span class="st">&quot;1978-04-02&quot;</span>, <span class="st">&quot;1979-04-01&quot;</span>, <span class="st">&quot;1980-03-30&quot;</span>, </span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>           <span class="st">&quot;1981-04-05&quot;</span>, <span class="st">&quot;1982-04-04&quot;</span>))</span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>)</span></code></pre></div>
+<ol start="3" style="list-style-type: lower-alpha">
 <li>Use a <code>join</code> function to add a date column to your cherry
 blossom data frame. Hints: (i) the <code>paste()</code> and
-<code>paste0</code> functions are useful for creating charecter vectors
+<code>paste0</code> functions are useful for creating character vectors
 (ii) it would be useful for these dates to have the same format as those
 found in the weather data set…</li>
+</ol>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>temp<span class="ot">&lt;-</span><span class="fu">left_join</span>(CBdata.Clean, dates, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;Year&quot;</span> <span class="ot">=</span> <span class="st">&quot;year&quot;</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="fu">sample_n</span>(temp, <span class="dv">10</span>)</span></code></pre></div>
+<pre><code>##        Race                  Name Age    Time Pace Division PiD/TiD
+## 1  1981 10M   Thomas A Hughes (M)  27 1:26:54 8:41    M2529 397/430
+## 2  1982 10M      Stephen Levy (M)  28 1:27:34 8:45    M2529 329/363
+## 3  1980 10M   James Augustine (M)  32 1:12:25 7:15    M3034 205/341
+## 4  1979 10M        Allen Rugg (M)  29 1:34:32 9:27    M2529 421/438
+## 5  1980 10M   Arthur Reynolds (M)  41 1:06:35 6:40    M4044  59/205
+## 6  1978 10M     Patty Stemler (W)  26      NR   NR    W2529   31/67
+## 7  1980 10M        Chris Shea (W)  19 1:05:15 6:32    W0119    4/10
+## 8  1980 10M William Singleton (M)  32 1:18:13 7:49    M3034 273/341
+## 9  1981 10M     Joseph Mackey (M)  31 1:29:56 9:00    M3034 660/706
+## 10 1982 10M Larry Weitthiller (M)  39 1:22:04 8:12    M3539 512/661
+##           Hometown Year       date
+## 1  Springfield, VA 1981 1981-04-05
+## 2    Baltimore, MD 1982 1982-04-04
+## 3      Fairfax, VA 1980 1980-03-30
+## 4    Arlington, VA 1979 1979-04-01
+## 5   Woodbridge, VA 1980 1980-03-30
+## 6               NR 1978 1978-04-02
+## 7   Washington, DC 1980 1980-03-30
+## 8   Washington, DC 1980 1980-03-30
+## 9      Fairfax, VA 1981 1981-04-05
+## 10       Burke, VA 1982 1982-04-04</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">sample_n</span>(weatherdata, <span class="dv">3</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 3 × 33
+##   STATION NAME  DATE        ACMH  ACSH PGTM   PRCP  PSUN  SNOW  SNWD TAVG   TMAX
+##   &lt;chr&gt;   &lt;chr&gt; &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;dbl&gt;
+## 1 USW000… WASH… 1978-05-27   100   100 0848      0    28     0     0 NA       77
+## 2 USW000… WASH… 1974-12-06    10     0 1606      0   100     0     0 NA       52
+## 3 USW000… WASH… 1977-06-11    20    20 1242      0    98     0     0 NA       83
+## # ℹ 21 more variables: TMIN &lt;dbl&gt;, TSUN &lt;dbl&gt;, WDF1 &lt;lgl&gt;, WDFG &lt;dbl&gt;,
+## #   WDFM &lt;dbl&gt;, WESD &lt;dbl&gt;, WSF1 &lt;lgl&gt;, WSFG &lt;dbl&gt;, WSFM &lt;dbl&gt;, WT01 &lt;dbl&gt;,
+## #   WT02 &lt;dbl&gt;, WT03 &lt;dbl&gt;, WT04 &lt;dbl&gt;, WT05 &lt;dbl&gt;, WT06 &lt;dbl&gt;, WT07 &lt;lgl&gt;,
+## #   WT08 &lt;dbl&gt;, WT09 &lt;dbl&gt;, WT14 &lt;lgl&gt;, WT16 &lt;dbl&gt;, WT18 &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">sample_n</span>(temp, <span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##       Race                     Name Age    Time Pace Division PiD/TiD
+## 1 1982 10M      George Williams (M)  39 1:13:22 7:20    M3539 276/661
+## 2 1977 10M        Roger Dilling (M)  37      NR   NR    M3539 141/227
+## 3 1981 10M Merriann M Panarella (W)  28 1:29:35 8:58    W2529  91/155
+##       Hometown Year       date
+## 1 Dahlgren, VA 1982 1982-04-04
+## 2           NR 1977 1977-04-03
+## 3   Boston, MA 1981 1981-04-05</code></pre>
+<ol start="4" style="list-style-type: lower-alpha">
 <li>Use a <code>join</code> function to add precipitation
 <code>PRCP</code> and minimum daily temperature <code>TMIN</code>
 columns to your cherry blossom data set.</li>
 </ol>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>CBdata.Clean <span class="ot">&lt;-</span> <span class="fu">left_join</span>(temp, <span class="fu">select</span>(weatherdata, DATE, PRCP, TMIN), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;date&quot;</span> <span class="ot">=</span> <span class="st">&quot;DATE&quot;</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a><span class="fu">sample_n</span>(CBdata.Clean, <span class="dv">10</span>)</span></code></pre></div>
+<pre><code>##        Race                    Name Age    Time Pace Division PiD/TiD
+## 1  1981 10M   Frederick Hoyback (M)  36 1:32:32 9:15    M3539 593/624
+## 2  1978 10M      Harry Kleinman (M)  55      NR   NR    M5559    4/22
+## 3  1982 10M        Ronald Levin (M)  36 1:10:00 7:00    M3539 202/661
+## 4  1982 10M         John Timeny (M)  31 1:21:22 8:08    M3034 505/623
+## 5  1982 10M Pascual Patalinghug (M)  49 1:17:56 7:48    M4549 104/198
+## 6  1977 10M         Stuart Ross (M)  36      NR   NR    M3539 123/227
+## 7  1982 10M       John Sheridan (M)  30 1:08:08 6:49    M3034 202/623
+## 8  1980 10M      Dennis A Rosen (M)  27 1:23:08 8:19    M2529 201/222
+## 9  1974 10M        John Donegan (M)  14 1:08:31 6:51    M0119      NR
+## 10 1982 10M        Rand Costich (M)  35 1:23:48 8:23    M3539 546/661
+##             Hometown Year       date PRCP TMIN
+## 1        Fairfax, VA 1981 1981-04-05 0.28   58
+## 2                 NR 1978 1978-04-02 0.00   47
+## 3  Silver Spring, MD 1982 1982-04-04 0.00   37
+## 4      Baltimore, MD 1982 1982-04-04 0.00   37
+## 5    Greencastle, PA 1982 1982-04-04 0.00   37
+## 6                 NR 1977 1977-04-03 0.00   58
+## 7      Harnsburg, PA 1982 1982-04-04 0.00   37
+## 8   Philadelphia, PA 1980 1980-03-30 0.18   50
+## 9                 NR 1974 1974-03-31 0.01   40
+## 10    Washington, DC 1982 1982-04-04 0.00   37</code></pre>
 </div>
 <div id="playing-with-the-indoor-positioning-system-data" class="section level1">
 <h1>Playing with the indoor positioning system data</h1>
@@ -998,8 +1144,8 @@ columns to your cherry blossom data set.</li>
 indoor positioning system data for 15 randomly sampled locations.This
 data set is loaded into memory using the chunk of R code below, complete
 the following exercises.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># loads data set IPS_sampledata</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;IPS_portion.RData&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="co"># loads data set IPS_sampledata</span></span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;IPS_portion.RData&quot;</span>)</span></code></pre></div>
 <div id="variable-dictionary" class="section level3">
 <h3>Variable dictionary</h3>
 <ul>
@@ -1022,48 +1168,116 @@ adhoc mode = 1)</p></li>
 <div id="lets-clean-up-the-data-a-bit" class="section level3">
 <h3>Let’s clean up the data a bit</h3>
 <ol style="list-style-type: decimal">
-<li><p>Apply the same <code>class</code> conversions you did last week
-to get these variables into the correct class type. Use
-<code>dplyr</code> functions and piping to complete this operation
-(there are many ways to do so). If you’d like to <code>mutate</code>
-multiple columns at once, the <code>across()</code> function might be
-useful!</p></li>
-<li><p>Because we only want data relative to access points, remove
+<li>Apply the same <code>class</code> conversions you did last week to
+get these variables into the correct class type. Use <code>dplyr</code>
+functions and piping to complete this operation (there are many ways to
+do so). If you’d like to <code>mutate</code> multiple columns at once,
+the <code>across()</code> function might be useful!</li>
+</ol>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>IPS_sampledata <span class="ot">&lt;-</span> IPS_sampledata <span class="sc">%&gt;%</span></span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>    <span class="at">time =</span> <span class="fu">as.numeric</span>(time),</span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>    <span class="at">scanMac =</span> <span class="fu">as.character</span>(scanMac),</span>
+<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a>    <span class="at">posX =</span> <span class="fu">as.numeric</span>(posX),</span>
+<span id="cb34-6"><a href="#cb34-6" tabindex="-1"></a>    <span class="at">posY =</span> <span class="fu">as.numeric</span>(posY),</span>
+<span id="cb34-7"><a href="#cb34-7" tabindex="-1"></a>    <span class="at">posZ =</span> <span class="fu">as.numeric</span>(posZ),</span>
+<span id="cb34-8"><a href="#cb34-8" tabindex="-1"></a>    <span class="at">orientation =</span> <span class="fu">as.numeric</span>(orientation),</span>
+<span id="cb34-9"><a href="#cb34-9" tabindex="-1"></a>    <span class="at">mac =</span> <span class="fu">as.character</span>(mac),</span>
+<span id="cb34-10"><a href="#cb34-10" tabindex="-1"></a>    <span class="at">signal =</span> <span class="fu">as.numeric</span>(signal),</span>
+<span id="cb34-11"><a href="#cb34-11" tabindex="-1"></a>    <span class="at">channel =</span> <span class="fu">as.numeric</span>(channel),</span>
+<span id="cb34-12"><a href="#cb34-12" tabindex="-1"></a>    <span class="at">type =</span> <span class="fu">as.integer</span>(type)</span>
+<span id="cb34-13"><a href="#cb34-13" tabindex="-1"></a>  )</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Because we only want data relative to access points, remove
 observations that correspond to any other type of device using
-<code>dplyr</code> functions.</p></li>
-<li><p>Last week you identified variables that provide redundant or no
+<code>dplyr</code> functions.</li>
+</ol>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>IPS_sampledata <span class="ot">&lt;-</span> IPS_sampledata <span class="sc">%&gt;%</span></span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>  <span class="fu">filter</span>(type <span class="sc">==</span> <span class="dv">3</span>)</span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li>Last week you identified variables that provide redundant or no
 information. Remove them from the data frame using <code>dplyr</code>
-functions.</p></li>
-<li><p>Note that the <code>time</code> variable is in milliseconds. Use
+functions.</li>
+</ol>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>IPS_sampledata <span class="ot">&lt;-</span> IPS_sampledata <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>scanMac, <span class="sc">-</span>type)</span></code></pre></div>
+<ol start="4" style="list-style-type: decimal">
+<li>Note that the <code>time</code> variable is in milliseconds. Use
 <code>dplyr</code> to transform it into seconds and then convert its
 class into a time format using the function
-<code>as.POSIXct</code>.</p></li>
-<li><p>Convert this data set to a more wide format by creating one
-column for each access point, with each of those columns containing the
+<code>as.POSIXct</code>.</li>
+</ol>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>IPS_sampledata <span class="ot">&lt;-</span> IPS_sampledata <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a>    <span class="at">time =</span> <span class="fu">as.POSIXct</span>(time <span class="sc">/</span> <span class="dv">1000</span>, <span class="at">origin =</span> <span class="st">&quot;1970-01-01&quot;</span>, <span class="at">tz =</span> <span class="st">&quot;UTC&quot;</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a>  )</span></code></pre></div>
+<ol start="5" style="list-style-type: decimal">
+<li>Convert this data set to a more wide format by creating one column
+for each access point, with each of those columns containing the
 corresponding signal strengths. Hint: you should end up with a data
 frame that has a lot fewer rows!<br />
 Set this data set aside and use the long format data for the rest of the
-assignment</p></li>
+assignment</li>
 </ol>
 </div>
 <div id="examining-the-data-more-closely" class="section level3">
 <h3>Examining the data more closely</h3>
 <ol style="list-style-type: decimal">
-<li><p>Using grouping and <code>dplyr</code> functions, tally the number
-of observations for all access points in the data.</p></li>
-<li><p>While the researchers did their best to clean their data, some
-noise was introduced by access points on other floors. Based on the
-number of counts, identify and remove likely suspects for access points
-read by mistake, again using <code>dplyr</code> functions.</p></li>
-<li><p>The orientation of the hand-held device considered was supposed
-to be exactly set to the 8 angles from 0-315 in increments of 45 degrees
+<li>Using grouping and <code>dplyr</code> functions, tally the number of
+observations for all access points in the data.</li>
+</ol>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>IPS_sampledata <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>  <span class="fu">group_by</span>(mac) <span class="sc">%&gt;%</span> <span class="co">#grouping by access point</span></span>
+<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a>  <span class="fu">tally</span>() <span class="sc">%&gt;%</span> <span class="co">#tallying the number of observations for all access points</span></span>
+<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="co">#displaying the counts in descending order</span></span></code></pre></div>
+<pre><code>## # A tibble: 11 × 2
+##    mac                   n
+##    &lt;chr&gt;             &lt;int&gt;
+##  1 00:0f:a3:39:e1:c0 13184
+##  2 00:0f:a3:39:dd:cd 13165
+##  3 00:14:bf:b1:97:8a 12017
+##  4 00:14:bf:3b:c7:c6 11788
+##  5 00:14:bf:b1:97:90 11082
+##  6 00:14:bf:b1:97:81 10962
+##  7 00:14:bf:b1:97:8d 10856
+##  8 00:0f:a3:39:e0:4b  4414
+##  9 00:0f:a3:39:e2:10  1201
+## 10 00:30:bd:f8:7f:c5   113
+## 11 00:04:0e:5c:23:fc    49</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>While the researchers did their best to clean their data, some noise
+was introduced by access points on other floors. Based on the number of
+counts, identify and remove likely suspects for access points read by
+mistake, again using <code>dplyr</code> functions.</li>
+</ol>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a>IPS_sampledata <span class="ot">&lt;-</span> IPS_sampledata <span class="sc">%&gt;%</span></span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a>  <span class="fu">group_by</span>(mac) <span class="sc">%&gt;%</span> <span class="co">#grouping by access point</span></span>
+<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;=</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="co">#filtering out access points that have less than 10 observations</span></span>
+<span id="cb40-4"><a href="#cb40-4" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="co">#ungrouping the data</span></span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li>The orientation of the hand-held device considered was supposed to
+be exactly set to the 8 angles from 0-315 in increments of 45 degrees
 (360 is equivalent to 0). However, in practice the measured orientations
 were close to the 8 expected but had some error. Use the
 <code>case_when</code> function to recode the orientation values as one
 of 0, 45, 90, 135, 180, 225, 270, 315. Call the recoded orientation
-variable <code>rec_orient</code>.</p></li>
-<li><p>Last week you created the function <code>signal_summary</code>
-that takes as inputs a location (<code>posX</code>, <code>posY</code>,
+variable <code>rec_orient</code>.</li>
+</ol>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>IPS_sampledata <span class="ot">&lt;-</span> IPS_sampledata <span class="sc">%&gt;%</span></span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>  <span class="co">#creating new variable for the correct orientation values</span></span>
+<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rec_orient =</span> <span class="fu">case_when</span>(</span>
+<span id="cb41-4"><a href="#cb41-4" tabindex="-1"></a>    orientation <span class="sc">&gt;=</span> <span class="fl">337.5</span> <span class="sc">|</span> orientation <span class="sc">&lt;</span> <span class="fl">22.5</span> <span class="sc">~</span> <span class="dv">0</span>, <span class="co">#setting value to 0 if original was greater/equal to 337.5 or less than 22.5</span></span>
+<span id="cb41-5"><a href="#cb41-5" tabindex="-1"></a>    orientation <span class="sc">&gt;=</span> <span class="fl">22.5</span> <span class="sc">&amp;</span> orientation <span class="sc">&lt;</span> <span class="fl">67.5</span> <span class="sc">~</span> <span class="dv">45</span>,<span class="co">#setting value to 45 if original was greater/equal to 22.5 or less than 67.5</span></span>
+<span id="cb41-6"><a href="#cb41-6" tabindex="-1"></a>    orientation <span class="sc">&gt;=</span> <span class="fl">67.5</span> <span class="sc">&amp;</span> orientation <span class="sc">&lt;</span> <span class="fl">112.5</span> <span class="sc">~</span> <span class="dv">90</span>,<span class="co">#setting value to 90 if original was greater/equal to 67.5 or less than 112.5</span></span>
+<span id="cb41-7"><a href="#cb41-7" tabindex="-1"></a>    orientation <span class="sc">&gt;=</span> <span class="fl">112.5</span> <span class="sc">&amp;</span> orientation <span class="sc">&lt;</span> <span class="fl">157.5</span> <span class="sc">~</span> <span class="dv">135</span>,<span class="co">#setting value to 135 if original was greater/equal to 112.5 or less than 157.5</span></span>
+<span id="cb41-8"><a href="#cb41-8" tabindex="-1"></a>    orientation <span class="sc">&gt;=</span> <span class="fl">157.5</span> <span class="sc">&amp;</span> orientation <span class="sc">&lt;</span> <span class="fl">202.5</span> <span class="sc">~</span> <span class="dv">180</span>,<span class="co">#setting value to 180 if original was greater/equal to 157.5 or less than 202.5</span></span>
+<span id="cb41-9"><a href="#cb41-9" tabindex="-1"></a>    orientation <span class="sc">&gt;=</span> <span class="fl">202.5</span> <span class="sc">&amp;</span> orientation <span class="sc">&lt;</span> <span class="fl">247.5</span> <span class="sc">~</span> <span class="dv">225</span>,<span class="co">#setting value to 225 if original was greater/equal to 202.5 or less than 247.5</span></span>
+<span id="cb41-10"><a href="#cb41-10" tabindex="-1"></a>    orientation <span class="sc">&gt;=</span> <span class="fl">247.5</span> <span class="sc">&amp;</span> orientation <span class="sc">&lt;</span> <span class="fl">292.5</span> <span class="sc">~</span> <span class="dv">270</span>,<span class="co">#setting value to 270 if original was greater/equal to 247.5 or less than 292.5</span></span>
+<span id="cb41-11"><a href="#cb41-11" tabindex="-1"></a>    orientation <span class="sc">&gt;=</span> <span class="fl">292.5</span> <span class="sc">&amp;</span> orientation <span class="sc">&lt;</span> <span class="fl">337.5</span> <span class="sc">~</span> <span class="dv">315</span><span class="co">#setting value to 315 if original was greater/equal to 292.5 or less than 337.5</span></span>
+<span id="cb41-12"><a href="#cb41-12" tabindex="-1"></a>  ))</span></code></pre></div>
+<ol start="4" style="list-style-type: decimal">
+<li>Last week you created the function <code>signal_summary</code> that
+takes as inputs a location (<code>posX</code>, <code>posY</code>,
 <code>posZ</code>), an orientation (<code>rec_orient</code>) and an
 access point id (<code>mac</code>). The function identified and subset
 the rows in <code>IPS_sampledata</code> corresponding to this unique
@@ -1074,8 +1288,26 @@ all combinations of location, orientation, and access point ID. Use
 piping,<code>summarise()</code>, and other <code>dplyr</code> functions
 to run this same computation without the use of loops or
 <code>lapply</code>. Compare your results with those from last week to
-confirm you’re doing the right thing!</p></li>
+confirm you’re doing the right thing!</li>
 </ol>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>signal_summary <span class="ot">&lt;-</span> IPS_sampledata <span class="sc">%&gt;%</span></span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>  <span class="fu">group_by</span>(posX, posY, posZ, rec_orient, mac) <span class="sc">%&gt;%</span> <span class="co">#grouping by location, orientation, and access point id</span></span>
+<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a>    <span class="at">mean_signal =</span> <span class="fu">mean</span>(signal, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="co">#average signal strength for each combination</span></span>
+<span id="cb42-5"><a href="#cb42-5" tabindex="-1"></a>    <span class="at">sd_signal =</span> <span class="fu">sd</span>(signal, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="co">#standard deviation of signal strength for each combination</span></span>
+<span id="cb42-6"><a href="#cb42-6" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&#39;drop&#39;</span> <span class="co">#ungrouping data</span></span>
+<span id="cb42-7"><a href="#cb42-7" tabindex="-1"></a>  )</span>
+<span id="cb42-8"><a href="#cb42-8" tabindex="-1"></a></span>
+<span id="cb42-9"><a href="#cb42-9" tabindex="-1"></a><span class="fu">head</span>(signal_summary) <span class="co">#checking work</span></span></code></pre></div>
+<pre><code>## # A tibble: 6 × 7
+##    posX  posY  posZ rec_orient mac               mean_signal sd_signal
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;                   &lt;dbl&gt;     &lt;dbl&gt;
+## 1     1     9     0          0 00:0f:a3:39:dd:cd       -66.2     3.05 
+## 2     1     9     0          0 00:0f:a3:39:e0:4b       -88.8     1.95 
+## 3     1     9     0          0 00:0f:a3:39:e1:c0       -54.6     5.06 
+## 4     1     9     0          0 00:0f:a3:39:e2:10       -92.8     0.981
+## 5     1     9     0          0 00:14:bf:3b:c7:c6       -71.8     2.26 
+## 6     1     9     0          0 00:14:bf:b1:97:81       -69.8     3.46</code></pre>
 </div>
 </div>
 </div>
