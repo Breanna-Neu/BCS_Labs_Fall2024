@@ -204,14 +204,14 @@ Set this data set aside and use the long format data for the rest of the assignm
 
 
 ```{r}
-library(tidyr)
+library(tidyr) #loading package tidyr
 
 IPS_sampledata_wide <- IPS_sampledata %>%
   pivot_wider(
-    names_from = mac,       
-    values_from = signal      
+    names_from = mac, #creating variables with names of each access point    
+    values_from = signal #the values in the new variables are the signal strengths for that access point
   )
-glimpse(IPS_sampledata_wide)
+glimpse(IPS_sampledata_wide) #checking work
 ```
 ### Examining the data more closely
 
