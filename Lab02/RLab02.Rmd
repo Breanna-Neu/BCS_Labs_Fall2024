@@ -203,6 +203,16 @@ IPS_sampledata <- IPS_sampledata %>%
 Set this data set aside and use the long format data for the rest of the assignment
 
 
+```{r}
+library(tidyr)
+
+IPS_sampledata_wide <- IPS_sampledata %>%
+  pivot_wider(
+    names_from = mac,       
+    values_from = signal      
+  )
+glimpse(IPS_sampledata_wide)
+```
 ### Examining the data more closely
 
 1. Using grouping and `dplyr` functions, tally the  number of observations for all access points in the data. 
