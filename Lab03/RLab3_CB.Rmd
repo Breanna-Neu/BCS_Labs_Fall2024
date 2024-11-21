@@ -50,3 +50,48 @@ Generate one plot that displays the age composition of each of the ten performan
 Hint: You can compute performance groups manually from `Year` and `Time`, or by carefully manipulating `Pis/Tis`.
 
 
+```{r}
+
+CBdata.Clean <- CBdata.Clean %>%
+  group_by(Year) %>%
+  mutate(
+    Rank = rank(Time), 
+    Total_Runners = n(), 
+    Percentile_Group = ceiling((Rank / Total_Runners) * 10) * 10 #percentiles (10%, 20%, etc.)
+  ) %>%
+  ungroup()
+
+CBdata.Clean <- CBdata.Clean %>%
+  mutate(
+    Age_Group = case_when(
+      Age < 20 ~ "Under 20",
+      Age >= 20 & Age < 30 ~ "20s",
+      Age >= 30 & Age < 40 ~ "30s",
+      Age >= 40 & Age < 50 ~ "40s",
+      Age >= 50 & Age < 60 ~ "50s",
+      Age >= 60 & Age < 70 ~ "60s",
+      Age >= 70 ~ "70+"
+    )
+  )
+
+Age_Composition <- CBdata.Clean %>%
+  group_by(Percentile_Group, Age_Group) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  group_by(Percentile_Group) %>%
+  mutate(Percentage = Count / sum(Count) * 100) 
+
+library(ggplot2)
+
+ggplot(Age_Composition, aes(x = as.factor(Percentile_Group), y = Percentage, fill = Age_Group)) +
+  geom_bar(stat = "identity", position = "stack") +
+  scale_fill_brewer(palette = "Set3") + 
+  labs(
+    title = "Age Composition Across Performance Groups",
+    x = "Performance Group (Percentile)",
+    y = "Percentage of Runners",
+    fill = "Age Group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
