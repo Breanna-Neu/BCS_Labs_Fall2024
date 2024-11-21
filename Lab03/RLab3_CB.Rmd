@@ -34,7 +34,8 @@ CBdata.Clean <- CBdata.1_10 %>%
   filter(!is.na(Age)) %>% 
   mutate(Time = na_if(Time, "NR")) %>%
   mutate(Time = na_if(Time, "")) %>% 
-  filter(!is.na(Time))
+  filter(!is.na(Time)) %>% 
+  mutate(Minutes = (period_to_seconds(hms(Time)))/60)
 ```
 
     
@@ -43,6 +44,7 @@ b) Plot the density curves for all ten years in one figure, along with a density
 2) Correlating age and time: Create a scatter plot of age and race time, with time being the response. All ten year's worth of data should be included, but you should be able to tell which year each point comes from. Include trend lines for each year, along with a trend line for the combined data set.
 
 ```{r}
+<<<<<<< HEAD
 # convert race time to seconds and then to minutes for easier interpretation
 CBdata.Clean$Time_seconds <- period_to_seconds(hms(CBdata.Clean$Time))
 CBdata.Clean$Time_minutes <- CBdata.Clean$Time_seconds / 60
@@ -50,6 +52,9 @@ CBdata.Clean$Time_minutes <- CBdata.Clean$Time_seconds / 60
 
 ```{r}
 # create a scatter plot of Age vs. Time in minutes
+=======
+
+>>>>>>> 919c846ef28de4b801f6ed58587ba2f5cfb83686
 ggplot(CBdata.Clean, aes(x = Age, y = Time_minutes, color = as.factor(Year))) +
   geom_point(size = 1, alpha = 0.35) +
   geom_smooth(method = "loess", se = FALSE) +  # Trendline for each year
