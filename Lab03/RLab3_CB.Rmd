@@ -40,7 +40,35 @@ b) Plot the density curves for all ten years in one figure, along with a density
   
 2) Correlating age and time: Create a scatter plot of age and race time, with time being the response. All ten year's worth of data should be included, but you should be able to tell which year each point comes from. Include trend lines for each year, along with a trend line for the combined data set.
 
+```{r}
+CBdata.Clean$Time_seconds <- period_to_seconds(hms(CBdata.Clean$Time))
+CBdata.Clean$Time_minutes <- CBdata.Clean$Time_seconds / 60
+```
+
+```{r}
+
+ggplot(CBdata.Clean, aes(x = Age, y = Time_minutes, color = as.factor(Year))) +
+  geom_point(size = 1, alpha = 0.35) +
+  geom_smooth(method = "loess", se = FALSE) +  # Trendline for each year
+  labs(
+    title = "Age vs. Time",
+    x = "Age",
+    y = "Time (minutes)",
+    color = "Year"
+  ) +
+  scale_color_brewer(palette = "Set2")+
+  theme_classic()
+
+
+
+
+```
+
+
 Write a short interpretation of the plot as if you were explaining it to your client.
+
+We can see that the runners performance peaks around the age of 20/21. Before runners are still growing and getting faster and after that age they start to slow down. The trend line for the combined data set shows that the older you get the slower you get.
+We can see that in 1978 we had the fastest runners in average and in 1979 we had the slowest runners in average. This is interesting as the times decreased dramatically within 1 year. We should further look into that.
   
   
 3) Relating age and times categorically:  
