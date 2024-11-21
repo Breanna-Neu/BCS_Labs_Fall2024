@@ -27,7 +27,16 @@ load("CBdata.1_10.RData") #Loading the cherry blossom data. (this is an example 
 
 1) Looking at race times all on their own.
     a) Import the data from `CBdata.1_10.RData` and combine all 10 year's worth of data into one data frame, removing observations with missing age or time data (this should be very similar to previous labs). For each year, create a histogram of race times and plot a the corresponding density curve in the same figure. Arrage all ten of these plots into one figure 
-    b) Plot the density curves for all ten years in one figure, along with a density curve of the combined data set (for a total of 11 curves). The main focus should be displaying the combined density, but all 11 densities should be discernible.
+    
+```{r}
+CBdata.Clean <- CBdata.1_10 %>%
+  bind_rows(list()) %>% 
+  filter(!is.na(Age)) %>% 
+  filter(!is.na(Time))
+```
+
+    
+b) Plot the density curves for all ten years in one figure, along with a density curve of the combined data set (for a total of 11 curves). The main focus should be displaying the combined density, but all 11 densities should be discernible.
   
 2) Correlating age and time: Create a scatter plot of age and race time, with time being the response. All ten year's worth of data should be included, but you should be able to tell which year each point comes from. Include trend lines for each year, along with a trend line for the combined data set.
 
