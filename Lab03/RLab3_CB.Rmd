@@ -43,12 +43,13 @@ b) Plot the density curves for all ten years in one figure, along with a density
 2) Correlating age and time: Create a scatter plot of age and race time, with time being the response. All ten year's worth of data should be included, but you should be able to tell which year each point comes from. Include trend lines for each year, along with a trend line for the combined data set.
 
 ```{r}
+# convert race time to seconds and then to minutes for easier interpretation
 CBdata.Clean$Time_seconds <- period_to_seconds(hms(CBdata.Clean$Time))
 CBdata.Clean$Time_minutes <- CBdata.Clean$Time_seconds / 60
 ```
 
 ```{r}
-
+# create a scatter plot of Age vs. Time in minutes
 ggplot(CBdata.Clean, aes(x = Age, y = Time_minutes, color = as.factor(Year))) +
   geom_point(size = 1, alpha = 0.35) +
   geom_smooth(method = "loess", se = FALSE) +  # Trendline for each year
@@ -75,7 +76,9 @@ We can see that in 1978 we had the fastest runners in average and in 1979 we had
   
 3) Relating age and times categorically:  
 We're interested in the age composition for ten performance groups. The performance groups are defined based ten percentiles (10%, 20%,...100%) of relative finish position. For example, someone finishing 3rd out of 125 would be in the 10th-percentile group, while someone finishing 985 out of 1013 would be in the 100th-percentile group.  
+
 The age groups we're interested in are defined by decade, so separate people in their 20's from people in their 30's and so forth.  
+
 Generate one plot that displays the age composition of each of the ten performance groups. Make sure you're using all ten year's worth of data.  
 Hint: You can compute performance groups manually from `Year` and `Time`, or by carefully manipulating `Pis/Tis`.
 
