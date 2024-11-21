@@ -29,13 +29,13 @@ load("CBdata.1_10.RData") #Loading the cherry blossom data. (this is an example 
     a) Import the data from `CBdata.1_10.RData` and combine all 10 year's worth of data into one data frame, removing observations with missing age or time data (this should be very similar to previous labs). For each year, create a histogram of race times and plot a the corresponding density curve in the same figure. Arrage all ten of these plots into one figure 
     
 ```{r}
-CBdata.Clean <- CBdata.1_10 %>%
+CBdata.Clean <- CBdata.1_10 %>% #combining all 10 years of data
   bind_rows(list()) %>% 
   filter(!is.na(Age)) %>% 
-  mutate(Time = na_if(Time, "NR")) %>%
-  mutate(Time = na_if(Time, "")) %>% 
-  filter(!is.na(Time)) %>% 
-  mutate(Minutes = (period_to_seconds(hms(Time)))/60)
+  mutate(Time = na_if(Time, "NR")) %>% # Replacing "NR" with NA
+  mutate(Time = na_if(Time, "")) %>%
+  filter(!is.na(Time)) %>%  # Removing observations with missing age or time data
+  mutate(Minutes = (period_to_seconds(hms(Time)))/60) # Adding a column for time in minutes
 ```
 
     
@@ -44,17 +44,7 @@ b) Plot the density curves for all ten years in one figure, along with a density
 2) Correlating age and time: Create a scatter plot of age and race time, with time being the response. All ten year's worth of data should be included, but you should be able to tell which year each point comes from. Include trend lines for each year, along with a trend line for the combined data set.
 
 ```{r}
-<<<<<<< HEAD
-# convert race time to seconds and then to minutes for easier interpretation
-CBdata.Clean$Time_seconds <- period_to_seconds(hms(CBdata.Clean$Time))
-CBdata.Clean$Time_minutes <- CBdata.Clean$Time_seconds / 60
-```
 
-```{r}
-# create a scatter plot of Age vs. Time in minutes
-=======
-
->>>>>>> 919c846ef28de4b801f6ed58587ba2f5cfb83686
 ggplot(CBdata.Clean, aes(x = Age, y = Time_minutes, color = as.factor(Year))) +
   geom_point(size = 1, alpha = 0.35) +
   geom_smooth(method = "loess", se = FALSE) +  # Trendline for each year
@@ -65,6 +55,7 @@ ggplot(CBdata.Clean, aes(x = Age, y = Time_minutes, color = as.factor(Year))) +
     color = "Year"
   ) +
   scale_color_brewer(palette = "Set2")+
+  
   theme_classic()
 
 
@@ -81,9 +72,7 @@ We can see that in 1978 we had the fastest runners in average and in 1979 we had
   
 3) Relating age and times categorically:  
 We're interested in the age composition for ten performance groups. The performance groups are defined based ten percentiles (10%, 20%,...100%) of relative finish position. For example, someone finishing 3rd out of 125 would be in the 10th-percentile group, while someone finishing 985 out of 1013 would be in the 100th-percentile group.  
-
 The age groups we're interested in are defined by decade, so separate people in their 20's from people in their 30's and so forth.  
-
 Generate one plot that displays the age composition of each of the ten performance groups. Make sure you're using all ten year's worth of data.  
 Hint: You can compute performance groups manually from `Year` and `Time`, or by carefully manipulating `Pis/Tis`.
 
