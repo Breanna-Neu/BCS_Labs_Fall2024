@@ -34,18 +34,14 @@ CBdata.Clean <- CBdata.1_10 %>%
   filter(!is.na(Age)) %>% 
   mutate(Time = na_if(Time, "NR")) %>%
   mutate(Time = na_if(Time, "")) %>% 
-  filter(!is.na(Time))
+  filter(!is.na(Time)) %>% 
+  mutate(Minutes = (period_to_seconds(hms(Time)))/60)
 ```
 
     
 b) Plot the density curves for all ten years in one figure, along with a density curve of the combined data set (for a total of 11 curves). The main focus should be displaying the combined density, but all 11 densities should be discernible.
   
 2) Correlating age and time: Create a scatter plot of age and race time, with time being the response. All ten year's worth of data should be included, but you should be able to tell which year each point comes from. Include trend lines for each year, along with a trend line for the combined data set.
-
-```{r}
-CBdata.Clean$Time_seconds <- period_to_seconds(hms(CBdata.Clean$Time))
-CBdata.Clean$Time_minutes <- CBdata.Clean$Time_seconds / 60
-```
 
 ```{r}
 
