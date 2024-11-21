@@ -26,7 +26,7 @@ load("CBdata.1_10.RData") #Loading the cherry blossom data. (this is an example 
 # Cherry Blossom Race Plotting Problems
 
 1) Looking at race times all on their own.
-    a) Import the data from `CBdata.1_10.RData` and combine all 10 year's worth of data into one data frame, removing observations with missing age or time data (this should be very similar to previous labs). For each year, create a histogram of race times and plot a the corresponding density curve in the same figure. Arrage all ten of these plots into one figure 
+    a) Import the data from `CBdata.1_10.RData` and combine all 10 year's worth of data into one data frame, removing observations with missing age or time data (this should be very similar to previous labs). For each year, create a histogram of race times and plot a the corresponding density curve in the same figure. Arrange all ten of these plots into one figure 
     
 ```{r}
 CBdata.Clean <- CBdata.1_10 %>%
@@ -36,6 +36,11 @@ CBdata.Clean <- CBdata.1_10 %>%
   mutate(Time = na_if(Time, "")) %>% 
   filter(!is.na(Time)) %>% 
   mutate(Minutes = (period_to_seconds(hms(Time)))/60)
+
+ggplot(CBdata.Clean, aes(x=Minutes, group=Year)) +
+  geom_histogram() +
+  geom_density(aes(group = Year), color="red") +
+  facet_wrap(~Year, nrow=2, ncol=5, scales="free")
 ```
 
     
