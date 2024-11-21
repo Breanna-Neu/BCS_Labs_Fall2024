@@ -32,6 +32,8 @@ load("CBdata.1_10.RData") #Loading the cherry blossom data. (this is an example 
 CBdata.Clean <- CBdata.1_10 %>%
   bind_rows(list()) %>% 
   filter(!is.na(Age)) %>% 
+  mutate(Time = na_if(Time, "NR")) %>%
+  mutate(Time = na_if(Time, "")) %>% 
   filter(!is.na(Time))
 ```
 
