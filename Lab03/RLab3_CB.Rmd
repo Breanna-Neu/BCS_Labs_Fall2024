@@ -29,13 +29,13 @@ load("CBdata.1_10.RData") #Loading the cherry blossom data. (this is an example 
     a) Import the data from `CBdata.1_10.RData` and combine all 10 year's worth of data into one data frame, removing observations with missing age or time data (this should be very similar to previous labs). For each year, create a histogram of race times and plot a the corresponding density curve in the same figure. Arrange all ten of these plots into one figure 
     
 ```{r}
-CBdata.Clean <- CBdata.1_10 %>%
+CBdata.Clean <- CBdata.1_10 %>% #combining all 10 years of data
   bind_rows(list()) %>% 
-  filter(!is.na(Age)) %>% 
-  mutate(Time = na_if(Time, "NR")) %>%
-  mutate(Time = na_if(Time, "")) %>% 
-  filter(!is.na(Time)) %>% 
-  mutate(Minutes = (period_to_seconds(hms(Time)))/60)
+  filter(!is.na(Age)) %>%
+  mutate(Time = na_if(Time, "NR")) %>% # Replacing "NR" with NA
+  mutate(Time = na_if(Time, "")) %>%
+  filter(!is.na(Time)) %>%  # Removing observations with missing age or time data
+  mutate(Minutes = (period_to_seconds(hms(Time)))/60) # Adding a column for time in minutes
 
 ggplot(CBdata.Clean, aes(x=Minutes, group=Year)) +
   geom_histogram() +
@@ -60,6 +60,7 @@ ggplot(CBdata.Clean, aes(x = Age, y = Time_minutes, color = as.factor(Year))) +
     color = "Year"
   ) +
   scale_color_brewer(palette = "Set2")+
+  
   theme_classic()
 
 
