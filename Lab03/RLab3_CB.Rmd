@@ -65,7 +65,6 @@ The distribution for all years combined, follows the same pattern as the majorit
 2) Correlating age and time: Create a scatter plot of age and race time, with time being the response. All ten year's worth of data should be included, but you should be able to tell which year each point comes from. Include trend lines for each year, along with a trend line for the combined data set.
 
 ```{r}
-
 ggplot(CBdata.Clean, aes(x = Age, y = Minutes, color = as.factor(Year))) +
   geom_point(size = 1, alpha = 0.35) +
   geom_smooth(method = "loess", se = FALSE) +  # Trendline for each year
@@ -78,10 +77,6 @@ ggplot(CBdata.Clean, aes(x = Age, y = Minutes, color = as.factor(Year))) +
   scale_color_brewer(palette = "Set2")+
   
   theme_classic()
-
-
-
-
 ```
 
 
@@ -101,15 +96,17 @@ Hint: You can compute performance groups manually from `Year` and `Time`, or by 
 ```{r}
 
 CBdata.Clean <- CBdata.Clean %>%
-  group_by(Year) %>%
+  group_by(Year) %>% #grouping data by Year
+  #creating new variable for the percentile
   mutate(
-    Rank = rank(Time), 
-    Total_Runners = n(), 
-    Percentile_Group = ceiling((Rank / Total_Runners) * 10) * 10 #percentiles (10%, 20%, etc.)
+    Rank = rank(Time), #ranking time
+    Total_Runners = n(), #count of runners
+    Percentile_Group = ceiling((Rank / Total_Runners) * 10) * 10 #creating percentiles (10%, 20%, etc.)
   ) %>%
-  ungroup()
+  ungroup() 
 
 CBdata.Clean <- CBdata.Clean %>%
+  #creating new variable for age categories
   mutate(
     Age_Group = case_when(
       Age < 20 ~ "Under 20",
@@ -123,14 +120,15 @@ CBdata.Clean <- CBdata.Clean %>%
   )
 
 Age_Composition <- CBdata.Clean %>%
-  group_by(Percentile_Group, Age_Group) %>%
-  summarise(Count = n(), .groups = "drop") %>%
-  group_by(Percentile_Group) %>%
-  mutate(Percentage = Count / sum(Count) * 100) 
+  group_by(Percentile_Group, Age_Group) %>% #grouping data by percentile and age group
+  summarise(Count = n(), .groups = "drop") %>% #number of runners in each percentile/age group
+  group_by(Percentile_Group) %>% #grouping by percentile performance group
+  mutate(Percentage = Count / sum(Count) * 100)  #percentage of runners in each performance/age group
 
 ggplot(Age_Composition, aes(x = as.factor(Percentile_Group), y = Percentage, fill = Age_Group)) +
-  geom_bar(stat = "identity", position = "stack") +
-  scale_fill_brewer(palette = "Set3") + 
+  geom_bar(stat = "identity", position = "stack") + #bar plot with percentage on y and performance group on x, colored by age group
+  scale_fill_brewer(palette = "Set3") + #setting palette colors
+  #labels for graph
   labs(
     title = "Age Composition Across Performance Groups",
     x = "Performance Group (Percentile)",
@@ -138,6 +136,6 @@ ggplot(Age_Composition, aes(x = as.factor(Percentile_Group), y = Percentage, fil
     fill = "Age Group"
   ) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) #tilting x-axis groups
 ```
 
