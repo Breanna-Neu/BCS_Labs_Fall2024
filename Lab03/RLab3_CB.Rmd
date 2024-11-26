@@ -4,7 +4,7 @@ subtitle: "Cherry Blossom Team"
 output: rmdformats::downcute
 ---
   
-  ```{r setup, include=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -15,13 +15,12 @@ knitr::opts_chunk$set(echo = TRUE)
 **ALSO, all plots generated should have labeled axes, titles, and legends when appropriate. Don't forget units of measurement! Make sure these plots could be interpreted by your client.**
 
 
-```{r import_data,eval=F, echo=F}
+```{r import_data, echo=F, warning=F}
 library(dplyr)
 library(ggplot2)
 library(lubridate)
+library(pals)
 load("CBdata.1_10.RData") #Loading the cherry blossom data. (this is an example of a properly commented line of code)
-
-
 ```
 # Cherry Blossom Race Plotting Problems
 
@@ -38,19 +37,36 @@ CBdata.Clean <- CBdata.1_10 %>% #combining all 10 years of data
   mutate(Minutes = (period_to_seconds(hms(Time)))/60) # Adding a column for time in minutes
 
 ggplot(CBdata.Clean, aes(x=Minutes, group=Year)) +
-  geom_histogram() +
-  geom_density(aes(group = Year), color="red") +
-  facet_wrap(~Year, nrow=2, ncol=5, scales="free")
+  geom_histogram(aes(y = after_stat(density)), alpha=0.5, fill="darkblue") +
+  geom_density(aes(group = Year), color="red", linewidth=0.6) +
+  facet_wrap(~Year, nrow=2, ncol=5, scales="free") +
+  labs(x="Race Time (in minutes)", y="Density", 
+       title="Distribution of Race Times by Year") +
+  theme_bw()
 ```
 
+There were not many runners in 1973 that had both their age and run time recorded, so the distribution for that year is not very useful. Most of the years follow a similar pattern, with the majority of runners having a run time between 60 and 90 minutes (roughly). With the exception of two years: 1977 and 1978. In 1977, there seem to be two distinct groups of runners: those with run times between 50-70 minutes and those with run times around 100 minutes. In 1978, the run times are almost entirely between 50-70 minutes. 
     
 b) Plot the density curves for all ten years in one figure, along with a density curve of the combined data set (for a total of 11 curves). The main focus should be displaying the combined density, but all 11 densities should be discernible.
+
+```{r}
+ggplot(CBdata.Clean, aes(x=Minutes)) +
+  geom_density(aes(group=Year, color=as.factor(Year)), linewidth=0.6, alpha=0) +
+  geom_density(aes(fill="All Years"),linewidth=0.9, alpha=0) +
+  scale_color_manual(values=as.vector(polychrome(12)[-2]), name="Year") +
+  scale_fill_manual(values="black", name=NULL) +
+  labs(x="Race Time (in minutes)", y="Density", 
+       title="Distribution of Race Times by Year vs All Years") +
+  theme_bw()
+```
+
+The distribution for all years combined, follows the same pattern as the majority of the individual years. It can be seen in this graph as well that the outlier years are 1973, 1977, and 1978. But these years seem to not have too much influence on the combined distribution.
   
 2) Correlating age and time: Create a scatter plot of age and race time, with time being the response. All ten year's worth of data should be included, but you should be able to tell which year each point comes from. Include trend lines for each year, along with a trend line for the combined data set.
 
 ```{r}
 
-ggplot(CBdata.Clean, aes(x = Age, y = Time_minutes, color = as.factor(Year))) +
+ggplot(CBdata.Clean, aes(x = Age, y = Minutes, color = as.factor(Year))) +
   geom_point(size = 1, alpha = 0.35) +
   geom_smooth(method = "loess", se = FALSE) +  # Trendline for each year
   labs(
@@ -111,8 +127,6 @@ Age_Composition <- CBdata.Clean %>%
   summarise(Count = n(), .groups = "drop") %>%
   group_by(Percentile_Group) %>%
   mutate(Percentage = Count / sum(Count) * 100) 
-
-library(ggplot2)
 
 ggplot(Age_Composition, aes(x = as.factor(Percentile_Group), y = Percentage, fill = Age_Group)) +
   geom_bar(stat = "identity", position = "stack") +
