@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r import_data, echo=F, warning=F}
+install.packages("pals")
 library(dplyr)
 library(ggplot2)
 library(lubridate)
@@ -65,18 +66,21 @@ The distribution for all years combined, follows the same pattern as the majorit
 2) Correlating age and time: Create a scatter plot of age and race time, with time being the response. All ten year's worth of data should be included, but you should be able to tell which year each point comes from. Include trend lines for each year, along with a trend line for the combined data set.
 
 ```{r}
+
+
+
 ggplot(CBdata.Clean, aes(x = Age, y = Minutes, color = as.factor(Year))) +
   geom_point(size = 1, alpha = 0.35) +
-  geom_smooth(method = "loess", se = FALSE) +  # Trendline for each year
+  geom_smooth(method = "loess", span = 0.25, se = FALSE) + # Adjusted span to avoid overfitting warnings
   labs(
     title = "Age vs. Time",
     x = "Age",
     y = "Time (minutes)",
     color = "Year"
   ) +
-  scale_color_brewer(palette = "Set2")+
-  
+  scale_color_brewer(palette = "Set3") + # Changed palette to support more colors
   theme_classic()
+
 ```
 
 
@@ -136,6 +140,6 @@ ggplot(Age_Composition, aes(x = as.factor(Percentile_Group), y = Percentage, fil
     fill = "Age Group"
   ) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) #tilting x-axis groups
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) #rotating x-axis labels
 ```
 
